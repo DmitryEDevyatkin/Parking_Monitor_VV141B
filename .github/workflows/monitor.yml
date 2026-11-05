@@ -1,0 +1,33 @@
+name: Мониторинг машиномест
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # каждые 10 минут (GitHub иногда запускает с опозданием на несколько минут)
+  workflow_dispatch:          # кнопка «Run workflow» для ручного запуска
+
+permissions:
+  contents: write             # нужно, чтобы сохранять state.json между запусками
+
+concurrency:
+  group: parking-monitor
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Проверить сайт и написать в Telegram
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 monitor.py
+
+      - name: Сохранить состояние
+        run: |
+          git config user.name "parking-bot"
+          git config user.email "parking-bot@users.noreply.github.com"
+          git add state.json
+          git diff --cached --quiet || (git commit -m "Обновление состояния паркинга" && git push)
