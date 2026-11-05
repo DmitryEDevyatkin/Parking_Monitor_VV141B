@@ -22,6 +22,7 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -197,6 +198,21 @@ def send_telegram(text):
             f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage", data=data, timeout=30
         ) as resp:
             ok = json.loads(resp.read().decode()).get("ok", False)
+    except urllib.error.HTTPError as e:
+        try:
+            reason = json.loads(e.read().decode()).get("description", "")
+        except Exception:
+            reason = ""
+        hint = ""
+        if "chat not found" in reason:
+            hint = (" → Проверьте TELEGRAM_CHAT_ID (нужен ВАШ id от @userinfobot, только цифры) "
+                    "и что вы нажали «Запустить» в своём боте.")
+        elif e.code == 401:
+            hint = " → Неверный TELEGRAM_TOKEN, скопируйте его у @BotFather заново."
+        elif e.code == 403:
+            hint = " → Бот заблокирован или не запущен: откройте своего бота и нажмите «Запустить»."
+        log(f"Ошибка отправки в Telegram: HTTP {e.code} {reason}{hint}")
+        return False
     except Exception as e:
         log(f"Ошибка отправки в Telegram: {e}")
         return False
