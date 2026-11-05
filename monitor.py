@@ -125,17 +125,24 @@ def sort_key(p):
 
 def summary(places):
     free = sorted((p for p in places.values() if p["status"] == FREE), key=sort_key)
-    booked = [p for p in places.values() if p["status"] == BOOKED]
+    booked = sorted((p for p in places.values() if p["status"] == BOOKED), key=sort_key)
+    other = sorted((p for p in places.values() if p["status"] not in (FREE, BOOKED)), key=sort_key)
     lines = []
     if free:
-        lines.append(f"Свободно сейчас ({len(free)}):")
+        lines.append(f"🟢 В продаже ({len(free)}):")
         lines += [f"  • {place_line(p)}" for p in free]
     else:
-        lines.append("Свободных мест сейчас нет.")
-    lines.append(f"Забронировано: {len(booked)}")
-    other = len(places) - len(free) - len(booked)
+        lines.append("🟢 В продаже: свободных мест нет.")
+    lines.append("")
+    if booked:
+        lines.append(f"🟡 В резерве ({len(booked)}):")
+        lines += [f"  • {place_line(p)}" for p in booked]
+    else:
+        lines.append("🟡 В резерве: нет.")
     if other:
-        lines.append(f"С другим статусом: {other}")
+        lines.append("")
+        lines.append(f"⚪ С другим статусом ({len(other)}):")
+        lines += [f"  • {place_line(p)} — {status_name(p['status'])}" for p in other]
     lines.append("")
     lines.append(f"Карта: {PAGE_URL}")
     lines.append(f"Отдел продаж: {SALES_PHONE}")
