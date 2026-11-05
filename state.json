@@ -29,15 +29,6 @@
    "price": 4350000,
    "status": 2
   },
-  "66b30b5f-32ad-ed11-a5da-00155d1f3d3e": {
-   "action": "",
-   "area": 14.2,
-   "building": "1",
-   "floor": -1,
-   "number": "140",
-   "price": 4550000,
-   "status": 2
-  },
   "a2b30b5f-32ad-ed11-a5da-00155d1f3d3e": {
    "action": "",
    "area": 13.3,
@@ -54,7 +45,7 @@
    "floor": -1,
    "number": "046",
    "price": 4300000,
-   "status": 1
+   "status": 2
   },
   "bcb30b5f-32ad-ed11-a5da-00155d1f3d3e": {
    "action": "",
@@ -99,7 +90,7 @@
    "floor": -1,
    "number": "079",
    "price": 4200000,
-   "status": 2
+   "status": 1
   }
  }
 }
