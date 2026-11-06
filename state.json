@@ -3,15 +3,6 @@
  "fails": 0,
  "last_report_date": "2026-11-06",
  "places": {
-  "0cb30b5f-32ad-ed11-a5da-00155d1f3d3e": {
-   "action": "",
-   "area": 13.5,
-   "building": "1",
-   "floor": -1,
-   "number": "095",
-   "price": 4250000,
-   "status": 2
-  },
   "16b30b5f-32ad-ed11-a5da-00155d1f3d3e": {
    "action": "",
    "area": 13.3,
