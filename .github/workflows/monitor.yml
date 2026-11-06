@@ -2,11 +2,14 @@ name: Мониторинг машиномест
 
 on:
   schedule:
-    - cron: "*/15 4-19 * * *"   # каждые 10 минут (GitHub иногда запускает с опозданием на несколько минут)
-  workflow_dispatch:          # кнопка «Run workflow» для ручного запуска
+    # Время в расписании GitHub — по Гринвичу (UTC), Москва = UTC+3.
+    # 4-19 по UTC = с 7:00 до 22:59 по Москве; ночью бот не запускается.
+    # Основной запуск — внешний будильник cron-job.org; это расписание запасное.
+    - cron: "*/15 4-19 * * *"
+  workflow_dispatch:          # кнопка «Run workflow» (её же нажимает cron-job.org)
 
 permissions:
-  contents: write             # нужно, чтобы сохранять state.json между запусками
+  contents: write             # нужно, чтобы сохранять состояние и базу между запусками
 
 concurrency:
   group: parking-monitor
@@ -19,15 +22,21 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Установить библиотеку для Excel
+        run: python3 -m pip install --quiet --break-system-packages openpyxl || python3 -m pip install --quiet openpyxl
+
       - name: Проверить сайт и написать в Telegram
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python3 monitor.py
 
-      - name: Сохранить состояние
+      - name: Сохранить состояние и базу
         run: |
           git config user.name "parking-bot"
           git config user.email "parking-bot@users.noreply.github.com"
-          git add state.json
-          git diff --cached --quiet || (git commit -m "Обновление состояния паркинга" && git push)
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Обновление данных паркинга"
+          git pull --rebase
+          git push
