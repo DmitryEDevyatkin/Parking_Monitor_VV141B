@@ -1,7 +1,7 @@
 {
  "db_ready": true,
  "fails": 0,
- "last_report_date": "2026-11-06",
+ "last_report_date": "2026-11-07",
  "places": {
   "16b30b5f-32ad-ed11-a5da-00155d1f3d3e": {
    "action": "",
@@ -46,7 +46,7 @@
    "floor": -1,
    "number": "079",
    "price": 4200000,
-   "status": 1
+   "status": 2
   }
  },
  "suspect": 0
